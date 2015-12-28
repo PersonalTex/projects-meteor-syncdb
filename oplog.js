@@ -1,4 +1,5 @@
 var Future = Npm.require('fibers/future');
+var util = Npm.require('util');
 
 
 if (Meteor.isClient) {
@@ -24,10 +25,11 @@ if (Meteor.isClient) {
 
   Meteor.startup(function () {
       if (Meteor.isServer) {
-          var options = {};
+          //var options = {};
           var commandMgr = null;
-          var dbDef = null;
+          var docUtil = null;
           var connManager = null;
+          var connection = null;
 
           var Setup = function () {
               if(!openConnection().wait())
@@ -44,20 +46,15 @@ if (Meteor.isClient) {
 
               try {
 
+                  docUtil = new DocUtil(Meteor.settings.Def);
 
-                  dbDef = new DbDef(Meteor.settings.Def);
+
+                  connMgr = new DbConnectionManager(Meteor.settings.DbConnections);
+
+                  connection = connMgr.open(Meteor.settings.OpLog.Databases.legacy).wait();
 
 
-                  connManager = new DbConnectionManager(Meteor.settings.DbConnections);
-
-                  //Future.wait(connManager.open('MSSQL'));
-                  options.legacyConnection =connManager.open(Meteor.settings.OpLog.Databases.legacy).wait();
-                  console.log(options.legacyConnection);
-
-                  commandMgr = new SqlCommandManager(options.legacyConnection, dbDef);
-                  options.commandManager = commandMgr;
-
-                  future.return(options.legacyConnection.dbInstance!=null );
+                  future.return(connection.dbInstance!=null );
               }
               catch(e) {
                   future.return(false);
@@ -75,14 +72,12 @@ if (Meteor.isClient) {
 
               var op = null;
 
+              commandMgr = new SqlCommandManager(connection);
 
-              //var uri = 'mongodb://127.0.0.1:1961/link';
-              var uri = connManager.getConnectionString(Meteor.settings.OpLog.Databases.local)
+              var uri = connMgr.getConnectionString(Meteor.settings.OpLog.Databases.local)
               console.log('uri '+ uri)
-              var filter = '(^link.doc)';
-
-
-              op = new OpLogWrite(uri, filter, options);
+              var filter = util.format('(^%s.doc)', Meteor.settings.DbConnections[Meteor.settings.OpLog.Databases.local].db);
+              op = new OpLogWrite(uri, filter, commandMgr, docUtil);
               op.run();
 
           }

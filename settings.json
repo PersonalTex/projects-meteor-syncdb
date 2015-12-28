@@ -65,7 +65,7 @@
                   "linkFieldName":"credate"
                },
                "updated.ts":{
-                  "fieldType":"ISODATE"
+                  "fieldType":"ISODATE",
                   "linkFieldName":"lastdate"
                }
             }

@@ -66,13 +66,14 @@ if (Meteor.isClient) {
 
           var initOpLog = function () {
 
-              var future = new Future();
+              //
+              // var future = new Future();
 
               console.log('initOpLog');
 
               var op = null;
 
-              commandMgr = new SqlCommandManager(connection);
+              commandMgr = new SequelizeCommandManager(connection);
 
               var uri = connMgr.getConnectionString(Meteor.settings.OpLog.Databases.local)
               console.log('uri '+ uri)

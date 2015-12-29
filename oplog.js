@@ -25,11 +25,15 @@ if (Meteor.isClient) {
 
   Meteor.startup(function () {
       if (Meteor.isServer) {
-          //var options = {};
+          var options = {};
+          /*
           var commandMgr = null;
           var docUtil = null;
+          */
           var connManager = null;
           var connection = null;
+          var op = null;
+          var dbUtil = null;
 
           var Setup = function () {
               if(!openConnection().wait())
@@ -45,9 +49,6 @@ if (Meteor.isClient) {
 
 
               try {
-
-                  docUtil = new DocUtil(Meteor.settings.Def);
-
 
                   connMgr = new DbConnectionManager(Meteor.settings.DbConnections);
 
@@ -71,14 +72,14 @@ if (Meteor.isClient) {
 
               console.log('initOpLog');
 
-              var op = null;
 
-              commandMgr = new SequelizeCommandManager(connection);
 
-              var uri = connMgr.getConnectionString(Meteor.settings.OpLog.Databases.local)
-              console.log('uri '+ uri)
+              var uri = connMgr.getConnectionString(Meteor.settings.OpLog.Databases.local);
               var filter = util.format('(^%s.doc)', Meteor.settings.DbConnections[Meteor.settings.OpLog.Databases.local].db);
-              op = new OpLogWrite(uri, filter, commandMgr, docUtil);
+              //options.commandManager = new OpSequelizeCommandManager(connection, new DbUtil(Meteor.settings.Def));
+              var dbUtil = new DbUtil(Meteor.settings.Def)
+              //console.log('uri '+ uri)
+              op = new OpLogWrite(uri, filter, connection,dbUtil );
               op.run();
 
           }

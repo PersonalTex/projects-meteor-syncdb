@@ -70,22 +70,40 @@
                }
             }
          },
+        "doc_test": {
+          "fields": [
+            {
+              "fieldName": "_id",
+              "fieldType": "OBJECT",
+              "linkFieldName": "mid"
+            }
+          ]
+        },
          "doc":{
-            "fields":{
-               "_id":{
+            "fields":[
+              {
+                  "fieldName" :"_id",
                   "fieldType":"OBJECT",
                   "linkFieldName":"mid"
                },
-               "firstid":{
+
+               {
+                 "fieldName" :"firstid",
                   "fieldType ":"OBJECT"
                },
-               "favoriteimg":{
+               {
+                 "fieldName" :"favoriteimg",
                   "fieldType ":"OBJECT"
                },
-               "endvdate":{
+               {
+                 "fieldName" :"endvdate",
                   "fieldType ":"ISODATE"
-               }
-            }
+               },
+              {
+                "fieldName" :"updated.username",
+                "linkFieldName":"lastuser"
+              }
+            ]
          },
          "doc_obj":{
             "fields":{

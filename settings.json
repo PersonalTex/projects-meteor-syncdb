@@ -86,22 +86,65 @@
                   "fieldType":"OBJECT",
                   "linkFieldName":"mid"
                },
-
+              {
+                "fieldName" :"firstid",
+                "fieldType":"OBJECT"
+              },
                {
-                 "fieldName" :"firstid",
-                  "fieldType ":"OBJECT"
+                 "fieldName" :"versionid"
+               },
+               {
+                 "fieldName" :"defid"
+               },
+               {
+                 "fieldName" :"siteid"
+               },
+               {
+                 "fieldName" :"params"
                },
                {
                  "fieldName" :"favoriteimg",
-                  "fieldType ":"OBJECT"
-               },
-               {
-                 "fieldName" :"endvdate",
-                  "fieldType ":"ISODATE"
+                  "fieldType":"OBJECT"
                },
               {
+                "fieldName" :"created.username",
+                "linkFieldName":"creuser",
+                "mandatory" : true
+              },
+              {
+                "fieldName" :"created.ts",
+                "linkFieldName":"credate",
+                "fieldType":"ISODATE",
+                "mandatory" : true
+
+              },
+              {
+                "fieldName" :"created.app",
+                "linkFieldName":"creapp",
+                "mandatory" : true
+
+              },
+              {
                 "fieldName" :"updated.username",
-                "linkFieldName":"lastuser"
+                "linkFieldName":"lastuser",
+                "mandatory" : true
+              },
+              {
+                "fieldName" :"updated.ts",
+                "linkFieldName":"lastdate",
+                "fieldType":"ISODATE",
+                "mandatory" : true
+
+              },
+              {
+                "fieldName" :"updated.app",
+                "linkFieldName":"lastapp",
+                "mandatory" : true
+
+              },
+              {
+                "fieldName" :"tags",
+                "fieldType":"ARRAY"
               }
             ]
          },

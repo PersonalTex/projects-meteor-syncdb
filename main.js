@@ -24,6 +24,8 @@ if (Meteor.isClient) {
 }
 
   Meteor.startup(function () {
+
+
       if (Meteor.isServer) {
           var options = {};
           /*
@@ -77,9 +79,11 @@ if (Meteor.isClient) {
               var uri = connMgr.getConnectionString(Meteor.settings.OpLog.Databases.local);
               var filter = util.format('(^%s.doc)', Meteor.settings.DbConnections[Meteor.settings.OpLog.Databases.local].db);
               //options.commandManager = new OpSequelizeCommandManager(connection, new DbUtil(Meteor.settings.Def));
-              var dbUtil = new DbUtil(Meteor.settings.Def)
-              //console.log('uri '+ uri)
-              op = new OpLogWrite(uri, filter, connection,dbUtil );
+              //var dbUtil = new DbUtil(Meteor.settings.Def)
+
+              var dbTables = new DbTables(Meteor.settings.Def.Collections);
+
+              op = new OpLogWrite(uri, filter, connection, dbTables);
               op.run();
 
           }

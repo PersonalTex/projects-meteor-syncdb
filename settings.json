@@ -57,29 +57,8 @@
       }
    },
    "Def":{
-      "Collections":{
-         "extend":{
-            "fields":{
-               "created.ts":{
-                  "fieldType":"ISODATE",
-                  "linkFieldName":"credate"
-               },
-               "updated.ts":{
-                  "fieldType":"ISODATE",
-                  "linkFieldName":"lastdate"
-               }
-            }
-         },
-        "doc_test": {
-          "fields": [
-            {
-              "fieldName": "_id",
-              "fieldType": "OBJECT",
-              "linkFieldName": "mid"
-            }
-          ]
-        },
-         "doc":{
+      "Collections": {
+         "doc": {
             "fields":[
               {
                   "fieldName" :"_id",
@@ -108,38 +87,32 @@
                },
               {
                 "fieldName" :"created.username",
-                "linkFieldName":"creuser",
-                "mandatory" : true
+                "linkFieldName":"creuser"
               },
               {
                 "fieldName" :"created.ts",
                 "linkFieldName":"credate",
-                "fieldType":"ISODATE",
-                "mandatory" : true
+                "fieldType":"ISODATE"
 
               },
               {
                 "fieldName" :"created.app",
-                "linkFieldName":"creapp",
-                "mandatory" : true
+                "linkFieldName":"creapp"
 
               },
               {
                 "fieldName" :"updated.username",
-                "linkFieldName":"lastuser",
-                "mandatory" : true
+                "linkFieldName":"lastuser"
               },
               {
                 "fieldName" :"updated.ts",
                 "linkFieldName":"lastdate",
-                "fieldType":"ISODATE",
-                "mandatory" : true
+                "fieldType":"ISODATE"
 
               },
               {
                 "fieldName" :"updated.app",
-                "linkFieldName":"lastapp",
-                "mandatory" : true
+                "linkFieldName":"lastapp"
 
               },
               {
@@ -147,32 +120,6 @@
                 "fieldType":"ARRAY"
               }
             ]
-         },
-         "doc_obj":{
-            "fields":{
-               "sectid":{
-                  "fieldType":"OBJECT"
-               },
-               "credate":{
-                  "fieldType":"ISODATE"
-               },
-               "lastdate":{
-                  "fieldType":"ISODATE"
-               }
-            }
-         },
-         "doc_sect":{
-            "fields":{
-               "docid":{
-                  "fieldType":"OBJECT"
-               },
-               "credate":{
-                  "fieldType":"ISODATE"
-               },
-               "lastdate":{
-                  "fieldType":"ISODATE"
-               }
-            }
          }
       }
    }

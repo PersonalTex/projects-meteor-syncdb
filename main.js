@@ -2,56 +2,91 @@
 
 var Future = Npm.require('fibers/future');
 var util = Npm.require('util');
+var events = Npm.require('events');
 
+var app = null;
+
+//AppOplog = {};
+var AppOplog = function(){
+    events.EventEmitter.call(this);
+    this.connMgr = null;
+    this.local = {};
+    this.legacy = {};
+};
+util.inherits(AppOplog, events.EventEmitter);
+
+
+AppOplog.prototype.openConnection = function (options) {var self = this;
+    var future = new Future();
+    console.log('openConnection '+ options);
+    try {
+        future.return(self.connMgr.open(options).wait());
+    }
+    catch(e) {
+        console.log(e);
+        future.return(null);
+    }
+    return future.wait();
+}.future();
+
+AppOplog.prototype.initOpLog = function () {
+    var self = this;
+
+    var future = new Future();
+    try {
+        self.local.uri = self.connMgr.getConnectionString(Meteor.settings.OpLog.Databases.local);
+        self.local.filter = util.format('(^%s.doc)', Meteor.settings.DbConnections[Meteor.settings.OpLog.Databases.local].db);
+        var dbTables = new DbTables(Meteor.settings.Def.Collections);
+        self.op = new OpLogWrite(self.local.uri, self.local.filter, self.legacy.connection, dbTables);
+        future.return(true);
+    }
+    catch (e) {
+        console.log(e);
+        future.return(false);
+    }
+    return future.wait();
+}.future();
+
+
+
+AppOplog.prototype.run = function() {
+    this.op.run();
+}
 
 Meteor.startup(function () {
   if (Meteor.isServer) {
-      //var options = {};
-      var connMgr = null;
-      var connection = null;
-      var op = null;
-      //var dbUtil = null;
+
+      app = new AppOplog();
+
+      /*
+      app.on('error', function(err){
+          console.log(err)
+      })
+      */
+
 
       var Setup = function () {
-
-          console.log("1");
-          connMgr = new DbConnectionManager(Meteor.settings.DbConnections);
-          console.log("2");
-
-          console.log(connMgr);
-          if(!openConnection(Meteor.settings.OpLog.Databases.legacy).wait())
-            console.log("openConnection failed")
-          else
-            initOpLog();
-      }
-
-
-      var openConnection = function (options) {
-          var future = new Future();
-          console.log('openConnection '+ options);
           try {
-
-
-              connection = connMgr.open(options).wait();
-              future.return(connection.dbInstance!=null );
+              app.connMgr = new DbConnectionManager(Meteor.settings.DbConnections);
+              app.legacy.connection = app.openConnection(Meteor.settings.OpLog.Databases.legacy).wait();
+              app.local.connection = app.openConnection(Meteor.settings.OpLog.Databases.local).wait();
+              app.initOpLog().wait();
+              app.run();
           }
           catch(e) {
-              future.return(false);
+              process.kill(process.pid, 'SIGHUP');
+              //console.log(e);
+              //app.emit('fatalError', e);
           }
-          return future.wait();
-      }.future();
-
-      var initOpLog = function () {
-          console.log('initOpLog');
-
-          var uri = connMgr.getConnectionString(Meteor.settings.OpLog.Databases.local);
-          var filter = util.format('(^%s.doc)', Meteor.settings.DbConnections[Meteor.settings.OpLog.Databases.local].db);
-          var dbTables = new DbTables(Meteor.settings.Def.Collections);
-          op = new OpLogWrite(uri, filter, connection, dbTables);
-          op.run();
       }
       Setup();
   }
 });
+
+
+process.on('SIGHUP', function() {
+    console.log('Got SIGHUP signal.');
+});
+
 
 

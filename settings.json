@@ -58,6 +58,70 @@
    },
    "Def":{
       "Collections": {
+         "doc_obj_row": {
+            "fields":[
+              {
+                  "fieldName" :"_id",
+                  "fieldType":"OBJECT",
+                  "linkFieldName":"mid"
+               },
+              {
+                  "fieldName" :"_objid",
+                  "fieldType":"OBJECT"
+               },
+              {
+                  "fieldName" :"siteid"
+               },
+              {
+                  "fieldName" :"defid"
+               },
+              {
+                  "fieldName" :"objtype"
+               },
+              {
+                  "fieldName" :"params"
+               },
+              {
+                "fieldName" :"created.username",
+                "linkFieldName":"creuser"
+              },
+              {
+                "fieldName" :"created.ts",
+                "linkFieldName":"credate",
+                "fieldType":"ISODATE"
+
+              },
+              {
+                "fieldName" :"created.app",
+                "linkFieldName":"creapp"
+
+              },
+              {
+                "fieldName" :"updated.username",
+                "linkFieldName":"lastuser"
+              },
+              {
+                "fieldName" :"updated.ts",
+                "linkFieldName":"lastdate",
+                "fieldType":"ISODATE"
+
+              },
+              {
+                "fieldName" :"updated.app",
+                "linkFieldName":"lastapp"
+
+              },
+
+              {
+                "fieldName" :"parentid"
+              },
+              {
+                 "fieldName": "$any",
+                 "linkFieldName": "$attr"
+              }
+
+              ]
+         },
          "doc": {
             "fields":[
               {

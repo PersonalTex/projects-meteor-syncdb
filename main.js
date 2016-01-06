@@ -36,7 +36,7 @@ AppOplog.prototype.initOpLog = function () {
     try {
         self.local.uri = self.connMgr.getConnectionString(Meteor.settings.OpLog.Databases.local);
         self.local.filter = util.format('(^%s.doc)', Meteor.settings.DbConnections[Meteor.settings.OpLog.Databases.local].db);
-        var dbTables = new DbTables(Meteor.settings.Def.Collections);
+        var dbTables = new DbTables(Meteor.settings.Def.Collections,self.local.connection);
         self.op = new OpLogWrite(self.local.uri, self.local.filter, self.legacy.connection, dbTables);
         future.return(true);
     }

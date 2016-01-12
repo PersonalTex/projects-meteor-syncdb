@@ -66,7 +66,7 @@
                   "linkFieldName":"mid"
                },
               {
-                  "fieldName" :"_objid",
+                  "fieldName":"objid",
                   "fieldType":"OBJECT"
                },
               {
@@ -89,12 +89,10 @@
                 "fieldName" :"created.ts",
                 "linkFieldName":"credate",
                 "fieldType":"ISODATE"
-
               },
               {
                 "fieldName" :"created.app",
                 "linkFieldName":"creapp"
-
               },
               {
                 "fieldName" :"updated.username",
@@ -104,22 +102,18 @@
                 "fieldName" :"updated.ts",
                 "linkFieldName":"lastdate",
                 "fieldType":"ISODATE"
-
               },
               {
                 "fieldName" :"updated.app",
                 "linkFieldName":"lastapp"
-
               },
-
               {
                 "fieldName" :"parentid"
               },
               {
-                 "fieldName": "$any",
-                 "linkFieldName": "$attr"
+                  "fieldName":"$DEF",
+                  "linkFieldName":"$ATTR"
               }
-
               ]
          },
          "doc": {
@@ -157,12 +151,10 @@
                 "fieldName" :"created.ts",
                 "linkFieldName":"credate",
                 "fieldType":"ISODATE"
-
               },
               {
                 "fieldName" :"created.app",
                 "linkFieldName":"creapp"
-
               },
               {
                 "fieldName" :"updated.username",
@@ -172,17 +164,122 @@
                 "fieldName" :"updated.ts",
                 "linkFieldName":"lastdate",
                 "fieldType":"ISODATE"
-
               },
               {
                 "fieldName" :"updated.app",
                 "linkFieldName":"lastapp"
-
               },
               {
                 "fieldName" :"tags",
                 "fieldType":"ARRAY"
               }
+            ]
+         },
+         "doc_obj":{
+            "fields":[
+               {
+                  "fieldName":"_id",
+                  "fieldType":"OBJECT",
+                  "linkFieldName":"mid"
+               },
+               {
+                  "fieldName":"sectid",
+                  "fieldType":"OBJECT"
+               },
+               {
+                  "fieldName":"defid"
+               },
+               {
+                  "fieldName":"objtype"
+               },
+               {
+                  "fieldName":"objord",
+                  "fieldType":"NUMBER"
+               },
+               {
+                  "fieldName":"params"
+               },
+               {
+                  "fieldName":"created.username",
+                  "linkFieldName":"creuser"
+               },
+               {
+                  "fieldName":"created.ts",
+                  "linkFieldName":"credate",
+                  "fieldType":"ISODATE"
+               },
+               {
+                  "fieldName":"created.app",
+                  "linkFieldName":"creapp"
+               },
+               {
+                  "fieldName":"updated.username",
+                  "linkFieldName":"lastuser"
+               },
+               {
+                  "fieldName":"updated.ts",
+                  "linkFieldName":"lastdate",
+                  "fieldType":"ISODATE"
+               },
+               {
+                  "fieldName":"updated.app",
+                  "linkFieldName":"lastapp"
+               },
+               {
+                  "fieldName":"parentid"
+               }
+            ]
+         },
+         "doc_sect":{
+            "fields":[
+               {
+                  "fieldName":"_id",
+                  "fieldType":"OBJECT",
+                  "linkFieldName":"mid"
+               },
+               {
+                  "fieldName":"docid",
+                  "fieldType":"OBJECT"
+               },
+               {
+                  "fieldName":"defid"
+               },
+               {
+                  "fieldName":"sectord",
+                  "fieldType":"NUMBER"
+               },
+               {
+                  "fieldName":"title"
+               },
+               {
+                  "fieldName":"params"
+               },
+               {
+                  "fieldName":"created.username",
+                  "linkFieldName":"creuser"
+               },
+               {
+                  "fieldName":"created.ts",
+                  "linkFieldName":"credate",
+                  "fieldType":"ISODATE"
+               },
+               {
+                  "fieldName":"created.app",
+                  "linkFieldName":"creapp"
+               },
+               {
+                  "fieldName":"updated.username",
+                  "linkFieldName":"lastuser"
+               },
+               {
+                  "fieldName":"updated.ts",
+                  "linkFieldName":"lastdate",
+                  "fieldType":"ISODATE"
+               },
+               {
+                  "fieldName":"updated.app",
+                  "linkFieldName":"lastapp"
+               }
             ]
          }
       }

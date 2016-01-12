@@ -1,16 +1,16 @@
 <head>
-  <title>oplog</title>
+    <title>meteor_servercall</title>
 </head>
 
 <body>
-  <h1>OPLogWrite</h1>
-
-  {{> oplog}}
+{{> simple}}
 </body>
 
-<template name="oplog">
-    <!--
-  <button>Click Me</button>
-  <p>You've pressed the button {{counter}} times.</p>
-  -->
+<template name="simple">
+    <h1>Calling serve method</h1>
+    <button>Click me</button>
+    <div id="ins">{{result.ins}}</div>
+    <div id="upd">{{result.upd}}</div>
+    <div id="del">{{result.del}}</div>
 </template>
+

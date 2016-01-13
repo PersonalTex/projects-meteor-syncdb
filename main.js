@@ -1,4 +1,4 @@
-//"use strict";
+"use strict";
 
 var Future = Npm.require('fibers/future');
 var util = Npm.require('util');

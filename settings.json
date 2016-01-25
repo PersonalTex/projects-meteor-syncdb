@@ -41,6 +41,7 @@
          "username":"sa",
          "database":"LINK01",
          "password":"manager",
+         "logging": false,
          "dialectOptions":{
             "instanceName":"SQLEXPRESS"
          }

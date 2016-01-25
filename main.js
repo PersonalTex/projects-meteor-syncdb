@@ -1,4 +1,4 @@
-"use strict";
+//use strict";
 
 var Future = Npm.require('fibers/future');
 var util = Npm.require('util');
@@ -9,18 +9,19 @@ var events = Npm.require('events');
 
 var app = null;
 
-var AppOplog = function(){
+var App = function(){
     events.EventEmitter.call(this);
     this.connMgr = null;
     this.local = {};
     this.legacy = {};
     this.dbTables = null;
-
+    this.conf = {};
 };
-util.inherits(AppOplog, events.EventEmitter);
+util.inherits(App, events.EventEmitter);
 
 
-AppOplog.prototype.openConnection = function (options) {var self = this;
+App.prototype.openConnection = function (options) {
+    var self = this;
     var future = new Future();
     console.log('openConnection '+ options);
     try {
@@ -33,14 +34,14 @@ AppOplog.prototype.openConnection = function (options) {var self = this;
     return future.wait();
 }.future();
 
-AppOplog.prototype.initOpLog = function () {
+App.prototype.initOpLog = function () {
     var self = this;
 
     var future = new Future();
     try {
-        self.local.uri = self.connMgr.getConnectionString(Meteor.settings.OpLog.Databases.local);
-        self.local.filter = util.format('(^%s.doc)', Meteor.settings.DbConnections[Meteor.settings.OpLog.Databases.local].db);
-        self.dbTables = new DbTables(Meteor.settings.Def.Collections,self.local.connection);
+        self.local.uri = self.connMgr.getConnectionString(self.conf.OpLog.Databases.local);
+        self.local.filter = util.format('(^%s.doc)', self.conf.DbConnections[self.conf.OpLog.Databases.local].db);
+        self.dbTables = new DbTables(self.conf.Def.Collections,self.local.connection);
         self.op = new OpLogWrite(self.local.uri, self.local.filter, self.legacy.connection, self.dbTables);
 
         future.return(true);
@@ -53,33 +54,30 @@ AppOplog.prototype.initOpLog = function () {
 }.future();
 
 
-
-AppOplog.prototype.start = function() {
+App.prototype.start = function() {
+    var future = new Future();
     if(this.legacy.connection.getInstance() == null)
       console.log("legacy connection failed");
     else if(this.local.connection.getInstance() == null)
         console.log("local connection failed");
     else
       this.op.start();
+    future.return(true);
+    return future.wait();
 
-}
-AppOplog.prototype.setup = function () {
-
-
-    Meteor.methods({
-        getOpLogCounters: function () {
-            console.log('on server, getOpLogCounters called');
-            return this.op.counters;
-        }
-
-
-    });
-
+}.future();
+App.prototype.setup = function () {
+    var self= this;
+    var future = new Future();
     try {
-        this.connMgr = new DbConnectionManager(Meteor.settings.DbConnections);
-        this.legacy.connection = app.openConnection(Meteor.settings.OpLog.Databases.legacy).wait();
-        this.local.connection = app.openConnection(Meteor.settings.OpLog.Databases.local).wait();
-        this.initOpLog().wait();
+        self.conf = self.readConf();
+        console.log(self.conf);
+        self.connMgr = new DbConnectionManager(self.conf.DbConnections);
+        self.legacy.connection = app.openConnection(self.conf.OpLog.Databases.legacy).wait();
+        self.local.connection = app.openConnection(self.conf.OpLog.Databases.local).wait();
+        self.initOpLog().wait();
+
+        future.return(true);
 
 
         //app.start();
@@ -87,9 +85,17 @@ AppOplog.prototype.setup = function () {
     catch(e) {
         //((process.kill(process.pid, 'SIGHUP');
         console.log(e);
+        future.return(false);
         //app.emit('fatalError', e);
     }
+    return future.wait();
+}.future();
 
+
+App.prototype.readConf = function() {
+
+    var conf = new Mongo.Collection('conf');
+    return conf.findOne({});
 }
 
 //var msg = {action: 'init', settings: Meteor.settings, npmfuture: Future, npmevents: events, npmutil: util };
@@ -107,10 +113,9 @@ Meteor.startup(function () {
       });
       opChild.send(msg);
       */
-
-      app = new AppOplog();
-      app.setup();
-      app.start()
+      app = new App();
+      app.setup().wait();
+      app.start().wait();
 
       /*
       app.on('error', function(err){

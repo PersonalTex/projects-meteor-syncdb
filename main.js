@@ -42,6 +42,8 @@ App.prototype.initOpLog = function () {
         self.local.uri = self.connMgr.getConnectionString(self.conf.OpLog.Databases.local);
         self.local.filter = util.format('(^%s.doc)', self.conf.DbConnections[self.conf.OpLog.Databases.local].db);
         self.dbTables = new DbTables(self.conf.Def.Collections,self.local.connection);
+        self.dbTables.init();
+        console.dir(self.dbTables.defColl)
         self.op = new OpLogWrite(self.local.uri, self.local.filter, self.legacy.connection, self.dbTables);
 
         future.return(true);
@@ -71,7 +73,7 @@ App.prototype.setup = function () {
     var future = new Future();
     try {
         self.conf = self.readConf();
-        console.log(self.conf);
+        //console.log(self.conf);
         self.connMgr = new DbConnectionManager(self.conf.DbConnections);
         self.legacy.connection = app.openConnection(self.conf.OpLog.Databases.legacy).wait();
         self.local.connection = app.openConnection(self.conf.OpLog.Databases.local).wait();

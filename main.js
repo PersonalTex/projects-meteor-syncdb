@@ -20,6 +20,7 @@ var App = function(){
 util.inherits(App, events.EventEmitter);
 
 
+/*
 App.prototype.openConnection = function (options) {
     var self = this;
     var future = new Future();
@@ -33,6 +34,7 @@ App.prototype.openConnection = function (options) {
     }
     return future.wait();
 }.future();
+*/
 
 App.prototype.initOpLog = function () {
     var self = this;
@@ -43,7 +45,6 @@ App.prototype.initOpLog = function () {
         self.local.filter = util.format('(^%s.doc)', self.conf.DbConnections[self.conf.OpLog.Databases.local].db);
         self.dbTables = new DbTables(self.conf.Def.Collections,self.local.connection);
         self.dbTables.init();
-        console.dir(self.dbTables.defColl)
         self.op = new OpLogWrite(self.local.uri, self.local.filter, self.legacy.connection, self.dbTables);
 
         future.return(true);
@@ -75,8 +76,10 @@ App.prototype.setup = function () {
         self.conf = self.readConf();
         //console.log(self.conf);
         self.connMgr = new DbConnectionManager(self.conf.DbConnections);
-        self.legacy.connection = app.openConnection(self.conf.OpLog.Databases.legacy).wait();
-        self.local.connection = app.openConnection(self.conf.OpLog.Databases.local).wait();
+        self.legacy.connection = self.connMgr.open(self.conf.OpLog.Databases.legacy).wait();
+        self.local.connection = self.connMgr.open(self.conf.OpLog.Databases.local).wait();
+        //self.legacy.connection = app.openConnection(self.conf.OpLog.Databases.legacy).wait();
+        //self.local.connection = app.openConnection(self.conf.OpLog.Databases.local).wait();
         self.initOpLog().wait();
 
         future.return(true);

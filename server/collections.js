@@ -3,6 +3,12 @@
  */
 
 //Conf = Meteor.Collection('conf')
+/*
 Meteor.publish("Conf", function() {
     return Conf.find();
+});
+*/
+
+Meteor.publish("syncdb_log", function () {
+    return syncdb.find();
 });

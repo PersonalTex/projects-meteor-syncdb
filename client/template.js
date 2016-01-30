@@ -1,17 +1,7 @@
-/**
- * Created by paolo on 11/01/16.
- */
-
-Template.simple.events = {
-    'click button' : function () {
-        Meteor.call('getOpLogCounters',function(err, response) {
-            Session.set('OpLogCounters', response);
-        });
-
+Template.list.helpers({
+    items: function() {
+        return syncdb.find();
     }
-};
-Template.simple.result = function () {
-    return Session.get('OpLogCounters') || "";
-};
+});
 
-
+Meteor.subscribe("syncdb");

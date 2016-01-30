@@ -5,7 +5,7 @@
  * Copyright
  * Released under the MIT license
  */
-"use strict";
+//"use strict";
 
 var Future = Npm.require('fibers/future');
 var util = Npm.require('util');
@@ -36,12 +36,12 @@ App.prototype.start = function() {
 
     // the application also start without legacy connection
     var legacyConn = self.connMgr.get(self.legacyAlias).wait();
-    console.log(legacyConn);
+    //console.log(legacyConn);
     if(legacyConn.getInstance() == null)
       console.log("warning: legacy connection failed");
 
     var localConn = self.connMgr.get(self.localAlias).wait();
-    console.log(localConn);
+    //console.log(localConn);
     if(localConn.getInstance() == null)
         console.log("error: local connection failed");
     else
@@ -122,5 +122,6 @@ Meteor.startup(function () {
       app.start().wait();
 
   }
+
 });
 

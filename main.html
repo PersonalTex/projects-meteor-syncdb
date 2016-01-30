@@ -1,16 +1,16 @@
 <head>
-    <title>meteor_servercall</title>
+    <title>syncdb</title>
 </head>
 
 <body>
-{{> simple}}
+ <h1>Hello</h1>
+{{>list}}
 </body>
 
-<template name="simple">
-    <h1>Calling serve method</h1>
-    <button>Click me</button>
-    <div id="ins">{{result.ins}}</div>
-    <div id="upd">{{result.upd}}</div>
-    <div id="del">{{result.del}}</div>
+<template name="list">
+{{#each items}}
+  {{oper}} - {{coll}}<br>
+{{/each}}
 </template>
+
 

@@ -1,91 +1,79 @@
-//use strict";
+/*!
+ * syncdb
+ *
+ *
+ * Copyright
+ * Released under the MIT license
+ */
+"use strict";
 
 var Future = Npm.require('fibers/future');
 var util = Npm.require('util');
 var events = Npm.require('events');
-//var ChildProcess = Npm.require('child_process');
-//var opChild = null;
-
 
 var app = null;
 
 var App = function(){
     events.EventEmitter.call(this);
     this.connMgr = null;
-    this.local = {};
-    this.legacy = {};
-    this.dbTables = null;
+    //this.local = {};
+    //this.legacy = {};
+    this.dbCollUtil = null;
+    this.localAlias = '';
+    this.legacyAlias = '';
+    this.opLogWrite = null;
+
     this.conf = {};
 };
+
 util.inherits(App, events.EventEmitter);
 
 
-/*
-App.prototype.openConnection = function (options) {
-    var self = this;
-    var future = new Future();
-    console.log('openConnection '+ options);
-    try {
-        future.return(self.connMgr.open(options).wait());
-    }
-    catch(e) {
-        console.log(e);
-        future.return(null);
-    }
-    return future.wait();
-}.future();
-*/
-
-App.prototype.initOpLog = function () {
-    var self = this;
-
-    var future = new Future();
-    try {
-        self.local.uri = self.connMgr.getConnectionString(self.conf.OpLog.Databases.local);
-        self.local.filter = util.format('(^%s.doc)', self.conf.DbConnections[self.conf.OpLog.Databases.local].db);
-        self.dbTables = new DbTables(self.conf.Def.Collections,self.local.connection);
-        self.dbTables.init();
-        self.op = new OpLogWrite(self.local.uri, self.local.filter, self.legacy.connection, self.dbTables);
-
-        future.return(true);
-    }
-    catch (e) {
-        console.log(e);
-        future.return(false);
-    }
-    return future.wait();
-}.future();
-
 
 App.prototype.start = function() {
+    var self = this;
     var future = new Future();
-    if(this.legacy.connection.getInstance() == null)
-      console.log("legacy connection failed");
-    else if(this.local.connection.getInstance() == null)
-        console.log("local connection failed");
+
+    // the application also start without legacy connection
+    var legacyConn = self.connMgr.get(self.legacyAlias).wait();
+    console.log(legacyConn);
+    if(legacyConn.getInstance() == null)
+      console.log("warning: legacy connection failed");
+
+    var localConn = self.connMgr.get(self.localAlias).wait();
+    console.log(localConn);
+    if(localConn.getInstance() == null)
+        console.log("error: local connection failed");
     else
-      this.op.start();
+      self.opLogWrite.start();
+
     future.return(true);
     return future.wait();
-
 }.future();
-App.prototype.setup = function () {
+
+
+App.prototype.initConnections = function () {
     var self= this;
     var future = new Future();
     try {
+        // read configuration from meteor.conf collection
         self.conf = self.readConf();
-        //console.log(self.conf);
+
+        self.localAlias = self.conf.OpLog.Databases.local;
+        self.legacyAlias = self.conf.OpLog.Databases.legacy;
+
+
+        // create instance of DbConnecctionManager class
         self.connMgr = new DbConnectionManager(self.conf.DbConnections);
-        self.legacy.connection = self.connMgr.open(self.conf.OpLog.Databases.legacy).wait();
-        self.local.connection = self.connMgr.open(self.conf.OpLog.Databases.local).wait();
+
+        self.connMgr.open(self.localAlias).wait();
+        self.connMgr.open(self.legacyAlias).wait();
+        //self.legacy.connection = self.connMgr.open(self.conf.OpLog.Databases.legacy).wait();
+        //self.local.connection = self.connMgr.open(self.conf.OpLog.Databases.local).wait();
         //self.legacy.connection = app.openConnection(self.conf.OpLog.Databases.legacy).wait();
         //self.local.connection = app.openConnection(self.conf.OpLog.Databases.local).wait();
-        self.initOpLog().wait();
 
         future.return(true);
-
-
-        //app.start();
     }
     catch(e) {
         //((process.kill(process.pid, 'SIGHUP');
@@ -96,52 +84,43 @@ App.prototype.setup = function () {
     return future.wait();
 }.future();
 
+App.prototype.initOpLog = function () {
+    var self = this;
 
+    var future = new Future();
+    try {
+
+        var uri = self.connMgr.getConnectionString(self.localAlias);
+        var filter = util.format('(^%s.doc)', self.conf.DbConnections[self.localAlias].db);
+        self.dbCollUtil = new DbCollectionUtil(self.conf.Def.Collections,self.connMgr.get(self.localAlias).wait());
+        self.dbCollUtil.init().wait();
+        self.opLogWrite = new OpLogWrite(uri, filter, self.connMgr.get(self.legacyAlias).wait()
+        /*self.legacy.connection*/, self.dbCollUtil);
+
+        future.return(true);
+    }
+    catch (e) {
+        console.log(e);
+        future.return(false);
+    }
+    return future.wait();
+}.future();
+
+// read the first document of meteor.conf collection
 App.prototype.readConf = function() {
-
     var conf = new Mongo.Collection('conf');
     return conf.findOne({});
 }
 
-//var msg = {action: 'init', settings: Meteor.settings, npmfuture: Future, npmevents: events, npmutil: util };
-
+// startup meteor event
 Meteor.startup(function () {
   if (Meteor.isServer) {
-
-
-
-      /*
-      opChild = ChildProcess.fork(process.env.PWD+'/server/child.js');
-
-      opChild.on('message', function(m) {
-          console.dir('received: ' + m);
-      });
-      opChild.send(msg);
-      */
       app = new App();
-      app.setup().wait();
+      app.initConnections().wait();
+      app.initOpLog().wait();
+
       app.start().wait();
-
-      /*
-      app.on('error', function(err){
-          console.log(err)
-      })
-      */
-
-
-      //Setup();
 
   }
 });
-
-
-
-
-/*
-process.on('SIGHUP', function() {
-    console.log('Got SIGHUP signal.');
-});
-*/
-
-
 

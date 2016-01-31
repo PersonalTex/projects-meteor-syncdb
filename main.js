@@ -89,13 +89,14 @@ App.prototype.initOpLog = function () {
 
     var future = new Future();
     try {
-
+/*
         var uri = self.connMgr.getConnectionString(self.localAlias);
         var filter = util.format('(^%s.doc)', self.conf.DbConnections[self.localAlias].db);
         self.dbCollUtil = new DbCollectionUtil(self.conf.Def.Collections,self.connMgr.get(self.localAlias).wait());
         self.dbCollUtil.init().wait();
-        self.opLogWrite = new OpLogWrite(uri, filter, self.connMgr.get(self.legacyAlias).wait()
-        /*self.legacy.connection*/, self.dbCollUtil);
+        self.opLogWrite = new OpLogWrite(uri, filter, self.connMgr.get(self.legacyAlias).wait(), self.dbCollUtil);
+        */
+        self.opLogWrite = new OpLogWrite(self.connMgr, self.conf);
 
         future.return(true);
     }

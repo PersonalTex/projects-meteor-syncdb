@@ -115,7 +115,7 @@ App.prototype.readConf = function() {
 
 // startup meteor event
 Meteor.startup(function () {
-  if (Meteor.isServer) {
+  if (Meteor.isServer ) {
       app = new App();
       app.initConnections().wait();
       app.initOpLog().wait();
